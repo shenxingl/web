@@ -15,9 +15,18 @@
       </el-form-item>
       <el-form-item label="会议时间">
         <el-col :span="11">
-          <el-date-picker type="datetime" placeholder="选择日期" format="yyyy 年 MM 月 dd 日 HH 时" value-format="yyyyMMddHH" v-model="ruleForm.date1" style="width: 100%;"></el-date-picker>
+          <el-date-picker type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" v-model="ruleForm.date1" style="width: 100%;"></el-date-picker>
         </el-col>
-        <el-col class="line" :span="10"><p style="font-family:verdana;font-size:40%;color:#7c7f80">(只支持整点(8-12，14-18)，会议时间为一小时，如需更长时间可连续预约)</p></el-col>
+        <el-col class="line" :span="10"><el-select v-model="ruleForm.date2" placeholder="选择时间">
+          <el-option label="8:00-9:00" value="08"></el-option>
+          <el-option label="9:00-10:00" value="09"></el-option>
+          <el-option label="10:00-11:00" value="10"></el-option>
+          <el-option label="11:00-12:00" value="11"></el-option>
+          <el-option label="14:00-15:00" value="14"></el-option>
+          <el-option label="15:00-16:00" value="15"></el-option>
+          <el-option label="16:00-17:00" value="16"></el-option>
+          <el-option label="17:00-18:00" value="17"></el-option>
+        </el-select></el-col>
       </el-form-item>
       <el-form-item label="会议内容" prop="name">
         <el-input type="textarea" v-model="ruleForm.desc"></el-input>
@@ -39,6 +48,7 @@ export default {
         name: this.$route.params.name,
         region: null,
         date1: null,
+        date2: null,
         desc: null
       },
       yuYue: {
@@ -86,7 +96,7 @@ export default {
       } else {
         let a = parseInt(this.ruleForm.date1)
         let b = parseInt(this.getDay())
-        if (((b + 1) * 100) >= a) {
+        if (b >= a) {
           this.$message.error({
             message: '日期必须大于今天！',
             center: true
@@ -94,7 +104,7 @@ export default {
         } else {
           this.yuYue.name = this.ruleForm.name
           this.yuYue.room = this.ruleForm.region
-          this.yuYue.datetime = this.ruleForm.date1
+          this.yuYue.datetime = this.ruleForm.date1 + this.ruleForm.date2
           this.yuYue.neirong = this.ruleForm.desc
           this.$axios({
             method: 'post',
